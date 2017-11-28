@@ -36,9 +36,9 @@ public class ConsoleGame
 	/**
 	 * Main function of the game.
 	 *
-	 * @param args
+	 * @param args Not used in the case
 	 *
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException Thrown if there is an error with cloning
 	 */
 	public static void main(String[] args) throws CloneNotSupportedException
 	{
@@ -78,12 +78,14 @@ public class ConsoleGame
 				System.out.println("Wrong choice");
 			}
 		}
+
+
 	}
 
 	/**
 	 * Prints Help menu
 	 */
-	public static void help()
+	private static void help()
 	{
 		System.out.println("Seriously?!?!?");
 	}
@@ -91,7 +93,7 @@ public class ConsoleGame
 	/**
 	 * Prints main menu
 	 */
-	public static void printMenu()
+	private static void printMenu()
 	{
 		System.out.println();
 		System.out.println("Choices:");
@@ -106,9 +108,9 @@ public class ConsoleGame
 	/**
 	 * Estimates the accuracy of the AI solver by running multiple games.
 	 *
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException Thrown if there is an error with cloning
 	 */
-	public static void calculateAccuracy() throws CloneNotSupportedException
+	private static void calculateAccuracy() throws CloneNotSupportedException
 	{
 		int wins = 0;
 		int total = 10;
@@ -147,9 +149,9 @@ public class ConsoleGame
 	/**
 	 * Method which allows playing the game.
 	 *
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException Thrown if there is an error with cloning
 	 */
-	public static void playGame() throws CloneNotSupportedException
+	private static void playGame() throws CloneNotSupportedException
 	{
 		System.out.println("Play the 2048 Game!");
 		System.out.println(
@@ -166,76 +168,64 @@ public class ConsoleGame
 			char inputChar;
 
 			ActionStatus result = ActionStatus.CONTINUE;
+			label:
 			while(result == ActionStatus.CONTINUE || result == ActionStatus.INVALID_MOVE)
 			{
 				inputChar = (char) unbuffered.read();
 				//inputChar = 'a';
-				if(inputChar == '\n' || inputChar == '\r')
+
+				switch(inputChar)
 				{
-					continue;
-				}
-				else if(inputChar == '8')
-				{
-					result = theGame.action(Direction.UP);
-				}
-				else if(inputChar == '6')
-				{
-					result = theGame.action(Direction.RIGHT);
-				}
-				else if(inputChar == '2')
-				{
-					result = theGame.action(Direction.DOWN);
-				}
-				else if(inputChar == '4')
-				{
-					result = theGame.action(Direction.LEFT);
-				}
-				else if(inputChar == 'a')
-				{
-					result = theGame.action(hint);
-				}
-				else if(inputChar == 'q')
-				{
-					System.out.println("Game ended, user quit.");
-					break;
-				}
-				else
-				{
-					System.out.println(
-							"Invalid key! Use 8 for UP, 6 for RIGHT, 2 for DOWN and 4 for LEFT. Type a to play automatically and q to exit. Press enter to submit your choice.");
-					continue;
+					case '\n':
+					case '\r':
+						continue;
+					case '8':
+						result = theGame.action(Direction.UP);
+						break;
+					case '6':
+						result = theGame.action(Direction.RIGHT);
+						break;
+					case '2':
+						result = theGame.action(Direction.DOWN);
+						break;
+					case '4':
+						result = theGame.action(Direction.LEFT);
+						break;
+					case 'a':
+						result = theGame.action(hint);
+						break;
+					case 'q':
+						System.out.println("Game ended, user quit.");
+						break label;
+					default:
+						System.out.println(
+								"Invalid key! Use 8 for UP, 6 for RIGHT, 2 for DOWN and 4 for LEFT. Type a to play automatically and q to exit. Press enter to submit your choice.");
+						continue;
 				}
 
-				if(result == ActionStatus.CONTINUE || result == ActionStatus.INVALID_MOVE)
-				{
-					hint = AIsolver.findBestMove(theGame, hintDepth);
-				}
-				else
-				{
-					hint = null;
-				}
+				hint = result == ActionStatus.CONTINUE || result == ActionStatus.INVALID_MOVE ?
+				       AIsolver.findBestMove(theGame, hintDepth) :
+				       null;
 				printBoard(theGame.getBoardArray(), theGame.getScore(), hint);
 
 				if(result != ActionStatus.CONTINUE)
-				{
 					System.out.println(result.getDescription());
-				}
 			}
 		}
 		catch(IOException e)
 		{
-			System.err.println(e);
+			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Prints the Board
 	 *
-	 * @param boardArray
-	 * @param score
-	 * @param hint
+	 * @param boardArray An integer representation of the board
+	 * @param score The current score of the game
+	 * @param hint The direction that you should play
 	 */
-	public static void printBoard(int[][] boardArray, int score, Direction hint)
+	private static void printBoard(int[][] boardArray, int score, Direction hint)
 	{
 		System.out.println("-------------------------");
 		System.out.println("Score:\t" + String.valueOf(score));
@@ -243,14 +233,13 @@ public class ConsoleGame
 		System.out.println("Hint:\t" + hint);
 		System.out.println();
 
-		for(int i = 0; i < boardArray.length; ++i)
+		for(int[] aBoardArray : boardArray)
 		{
-			for(int j = 0; j < boardArray[i].length; ++j)
-			{
-				System.out.print(boardArray[i][j] + "\t");
-			}
+			for(int anABoardArray : aBoardArray)
+				System.out.print(anABoardArray + "\t");
 			System.out.println();
 		}
+
 		System.out.println("-------------------------");
 	}
 }
