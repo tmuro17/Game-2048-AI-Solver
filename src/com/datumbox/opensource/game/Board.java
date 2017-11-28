@@ -20,6 +20,7 @@ import com.datumbox.opensource.dataobjects.ActionStatus;
 import com.datumbox.opensource.dataobjects.Direction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -38,12 +39,12 @@ public class Board implements Cloneable
 	/**
 	 * The maximum combination in which the game terminates
 	 */
-	public static final int TARGET_POINTS = 2048;
+	private static final int TARGET_POINTS = 2048;
 
 	/**
 	 * The theoretical minimum win score until the target point is reached
 	 */
-	public static final int MINIMUM_WIN_SCORE = 18432;
+	private static final int MINIMUM_WIN_SCORE = 18432;
 	/**
 	 * Random Generator which is used in the creation of random cells
 	 */
@@ -71,7 +72,6 @@ public class Board implements Cloneable
 
 		addRandomCell();
 		addRandomCell();
-
 	}
 
 	/**
@@ -150,9 +150,7 @@ public class Board implements Cloneable
 			for(int j = 1; j < BOARD_SIZE; ++j)
 			{
 				if(boardArray[i][j] == 0)
-				{
 					continue; //skip moving zeros
-				}
 
 				int previousPosition = j - 1;
 				while(previousPosition > lastMergePosition && boardArray[i][previousPosition] == 0)
@@ -160,30 +158,27 @@ public class Board implements Cloneable
 					--previousPosition;
 				}
 
-				if(previousPosition == j)
-				{
-					//we can't move this at all
-				}
-				else if(boardArray[i][previousPosition] == 0)
-				{
-					//move to empty value
-					boardArray[i][previousPosition] = boardArray[i][j];
-					boardArray[i][j] = 0;
-				}
-				else if(boardArray[i][previousPosition] == boardArray[i][j])
-				{
-					//merge with matching value
-					boardArray[i][previousPosition] *= 2;
-					boardArray[i][j] = 0;
-					points += boardArray[i][previousPosition];
-					lastMergePosition = previousPosition + 1;
+				if(previousPosition != j)
+					if(boardArray[i][previousPosition] == 0)
+					{
+						//move to empty value
+						boardArray[i][previousPosition] = boardArray[i][j];
+						boardArray[i][j] = 0;
+					}
+					else if(boardArray[i][previousPosition] == boardArray[i][j])
+					{
+						//merge with matching value
+						boardArray[i][previousPosition] *= 2;
+						boardArray[i][j] = 0;
+						points += boardArray[i][previousPosition];
+						lastMergePosition = previousPosition + 1;
 
-				}
-				else if(boardArray[i][previousPosition] != boardArray[i][j] && previousPosition + 1 != j)
-				{
-					boardArray[i][previousPosition + 1] = boardArray[i][j];
-					boardArray[i][j] = 0;
-				}
+					}
+					else if(boardArray[i][previousPosition] != boardArray[i][j] && previousPosition + 1 != j)
+					{
+						boardArray[i][previousPosition + 1] = boardArray[i][j];
+						boardArray[i][j] = 0;
+					}
 			}
 		}
 
@@ -217,15 +212,9 @@ public class Board implements Cloneable
 		List<Integer> cellList = new ArrayList<>();
 
 		for(int i = 0; i < BOARD_SIZE; ++i)
-		{
 			for(int j = 0; j < BOARD_SIZE; ++j)
-			{
 				if(boardArray[i][j] == 0)
-				{
 					cellList.add(BOARD_SIZE * i + j);
-				}
-			}
-		}
 
 		return cellList;
 	}
@@ -252,20 +241,13 @@ public class Board implements Cloneable
 	 */
 	public boolean hasWon()
 	{
+		//speed optimization
 		if(score < MINIMUM_WIN_SCORE)
-		{ //speed optimization
 			return false;
-		}
 		for(int i = 0; i < BOARD_SIZE; ++i)
-		{
 			for(int j = 0; j < BOARD_SIZE; ++j)
-			{
 				if(boardArray[i][j] >= TARGET_POINTS)
-				{
 					return true;
-				}
-			}
-		}
 
 		return false;
 	}
@@ -281,24 +263,17 @@ public class Board implements Cloneable
 	{
 		boolean terminated = false;
 
-		if(hasWon() == true)
-		{
+		if(hasWon())
 			terminated = true;
-		}
-		else
-		{
-			if(getNumberOfEmptyCells() == 0)
-			{ //if no more available cells
-				Board copyBoard = (Board) this.clone();
+		else if(getNumberOfEmptyCells() == 0)
+		{ //if no more available cells
+			Board copyBoard = (Board) this.clone();
 
-				if(copyBoard.move(Direction.UP) == 0 && copyBoard.move(Direction.RIGHT) == 0
-				   && copyBoard.move(Direction.DOWN) == 0 && copyBoard.move(Direction.LEFT) == 0)
-				{
-					terminated = true;
-				}
+			if(copyBoard.move(Direction.UP) == 0 && copyBoard.move(Direction.RIGHT) == 0
+			   && copyBoard.move(Direction.DOWN) == 0 && copyBoard.move(Direction.LEFT) == 0)
+				terminated = true;
 
-				//copyBoard=null;
-			}
+			//copyBoard=null;
 		}
 
 		return terminated;
@@ -325,35 +300,14 @@ public class Board implements Cloneable
 		boolean newCellAdded = false;
 
 		if(!isEqual(currBoardArray, newBoardArray))
-		{
 			newCellAdded = addRandomCell();
-		}
 
-		if(newPoints == 0 && newCellAdded == false)
-		{
-			if(isGameTerminated())
-			{
-				result = ActionStatus.NO_MORE_MOVES;
-			}
-			else
-			{
-				result = ActionStatus.INVALID_MOVE;
-			}
-		}
-		else
-		{
-			if(newPoints >= TARGET_POINTS)
-			{
-				result = ActionStatus.WIN;
-			}
-			else
-			{
-				if(isGameTerminated())
-				{
-					result = ActionStatus.NO_MORE_MOVES;
-				}
-			}
-		}
+		if(newPoints == 0 && !newCellAdded)
+			result = isGameTerminated() ? ActionStatus.NO_MORE_MOVES : ActionStatus.INVALID_MOVE;
+		else if(newPoints >= TARGET_POINTS)
+			result = ActionStatus.WIN;
+		else if(isGameTerminated())
+			result = ActionStatus.NO_MORE_MOVES;
 
 		return result;
 	}
@@ -382,12 +336,8 @@ public class Board implements Cloneable
 		int[][] rotatedBoard = new int[BOARD_SIZE][BOARD_SIZE];
 
 		for(int i = 0; i < BOARD_SIZE; ++i)
-		{
 			for(int j = 0; j < BOARD_SIZE; ++j)
-			{
 				rotatedBoard[BOARD_SIZE - j - 1][i] = boardArray[i][j];
-			}
-		}
 
 		boardArray = rotatedBoard;
 	}
@@ -400,12 +350,8 @@ public class Board implements Cloneable
 		int[][] rotatedBoard = new int[BOARD_SIZE][BOARD_SIZE];
 
 		for(int i = 0; i < BOARD_SIZE; ++i)
-		{
 			for(int j = 0; j < BOARD_SIZE; ++j)
-			{
 				rotatedBoard[i][j] = boardArray[BOARD_SIZE - j - 1][i];
-			}
-		}
 
 		boardArray = rotatedBoard;
 	}
@@ -420,9 +366,7 @@ public class Board implements Cloneable
 		int listSize = emptyCells.size();
 
 		if(listSize == 0)
-		{
 			return false;
-		}
 
 		int randomCellId = emptyCells.get(randomGenerator.nextInt(listSize));
 		int randomValue = (randomGenerator.nextDouble() < 0.9) ? 2 : 4;
@@ -444,12 +388,9 @@ public class Board implements Cloneable
 	 */
 	private int[][] clone2dArray(int[][] original)
 	{
-		int[][] copy = new int[original.length][];
-		for(int i = 0; i < original.length; ++i)
-		{
-			copy[i] = original[i].clone();
-		}
-		return copy;
+		return Arrays.stream(original)
+		             .map(int[]::clone)
+		             .toArray(int[][]::new);
 	}
 
 	/**
@@ -462,20 +403,13 @@ public class Board implements Cloneable
 	public boolean isEqual(int[][] currBoardArray, int[][] newBoardArray)
 	{
 
-		boolean equal = true;
-
 		for(int i = 0; i < currBoardArray.length; i++)
-		{
 			for(int j = 0; j < currBoardArray.length; j++)
-			{
 				if(currBoardArray[i][j] != newBoardArray[i][j])
 				{
-					equal = false; //The two boards are not same.
-					return equal;
+					return false;
 				}
-			}
-		}
 
-		return equal;
+		return true;
 	}
 }
