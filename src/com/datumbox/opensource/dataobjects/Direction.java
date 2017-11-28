@@ -56,10 +56,10 @@ public enum Direction
 	/**
 	 * Constructor
 	 *
-	 * @param code
-	 * @param description
+	 * @param code The numeric code of the status
+	 * @param description The description of the status
 	 */
-	private Direction(final int code, final String description)
+	Direction(final int code, final String description)
 	{
 		this.code = code;
 		this.description = description;
@@ -68,9 +68,9 @@ public enum Direction
 	/**
 	 * Getter for code.
 	 *
-	 * @return
+	 * @return The numeric code of the status
 	 */
-	public int getCode()
+	@SuppressWarnings("unused") public int getCode()
 	{
 		return code;
 	}
@@ -78,9 +78,9 @@ public enum Direction
 	/**
 	 * Getter for description.
 	 *
-	 * @return
+	 * @return The description of the status
 	 */
-	public String getDescription()
+	@SuppressWarnings("unused") public String getDescription()
 	{
 		return description;
 	}
@@ -88,7 +88,7 @@ public enum Direction
 	/**
 	 * Overloads the toString and returns the description of the move.
 	 *
-	 * @return
+	 * @return A String representation of the status
 	 */
 	@Override public String toString()
 	{
