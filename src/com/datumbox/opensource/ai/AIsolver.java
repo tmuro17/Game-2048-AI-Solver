@@ -34,12 +34,12 @@ public class AIsolver
 	/**
 	 * Method that finds the best next move.
 	 *
-	 * @param theBoard
-	 * @param depth
+	 * @param theBoard The board on which to work
+	 * @param depth The depth to look
 	 *
-	 * @return
+	 * @return The <code>Direction</code> of the best move
 	 *
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException Thrown if there is an error with cloning
 	 */
 	public static Direction findBestMove(Board theBoard, int depth) throws CloneNotSupportedException
 	{
@@ -53,13 +53,13 @@ public class AIsolver
 	/**
 	 * Finds the best move by using the Minimax algorithm.
 	 *
-	 * @param theBoard
-	 * @param depth
-	 * @param player
+	 * @param theBoard The board on which to work
+	 * @param depth The depth to look
+	 * @param player Which player is making the move
 	 *
-	 * @return
+	 * @return A map representing the best moves
 	 *
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException Thrown if there is an error with cloning
 	 */
 	@SuppressWarnings("unused") private static Map<String, Object> minimax(Board theBoard, int depth, Player player) throws CloneNotSupportedException
 	{
@@ -134,15 +134,15 @@ public class AIsolver
 	/**
 	 * Finds the best move bay using the Alpha-Beta pruning algorithm.
 	 *
-	 * @param theBoard
-	 * @param depth
-	 * @param alpha
-	 * @param beta
-	 * @param player
+	 * @param theBoard The board on which to look
+	 * @param depth The depth to look
+	 * @param alpha The alpha for the alpha beta
+	 * @param beta The beta for the alpha beta
+	 * @param player The player who is making the move
 	 *
-	 * @return
+	 * @return A map representing the best moves
 	 *
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException Thrown if there is an error with cloning
 	 */
 	private static Map<String, Object> alphabeta(Board theBoard, int depth, int alpha, int beta, Player player)
 			throws CloneNotSupportedException
@@ -227,11 +227,11 @@ public class AIsolver
 	 * Estimates a heuristic score by taking into account the real score, the
 	 * number of empty cells and the clustering score of the board.
 	 *
-	 * @param actualScore
-	 * @param numberOfEmptyCells
-	 * @param clusteringScore
+	 * @param actualScore The actual score of the game
+	 * @param numberOfEmptyCells The number of empty cells that exist
+	 * @param clusteringScore The clustering score of the board
 	 *
-	 * @return
+	 * @return The heuristically calculated score
 	 */
 	private static int heuristicScore(int actualScore, int numberOfEmptyCells, int clusteringScore)
 	{
@@ -243,9 +243,9 @@ public class AIsolver
 	 * Calculates a heuristic variance-like score that measures how clustered the
 	 * board is.
 	 *
-	 * @param boardArray
+	 * @param boardArray An array that represents the board
 	 *
-	 * @return
+	 * @return The clustering score of the board representation
 	 */
 	private static int calculateClusteringScore(int[][] boardArray)
 	{
