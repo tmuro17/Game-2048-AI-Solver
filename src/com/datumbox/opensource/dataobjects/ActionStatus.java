@@ -56,10 +56,10 @@ public enum ActionStatus
 	/**
 	 * Constructor
 	 *
-	 * @param code
-	 * @param description
+	 * @param code The code to be used for the status
+	 * @param description The description to be used for the status
 	 */
-	private ActionStatus(final int code, final String description)
+	ActionStatus(final int code, final String description)
 	{
 		this.code = code;
 		this.description = description;
@@ -68,9 +68,9 @@ public enum ActionStatus
 	/**
 	 * Getter for code.
 	 *
-	 * @return
+	 * @return The code of the status
 	 */
-	public int getCode()
+	@SuppressWarnings("unused") public int getCode()
 	{
 		return code;
 	}
@@ -78,7 +78,7 @@ public enum ActionStatus
 	/**
 	 * Getter for description.
 	 *
-	 * @return
+	 * @return The description of the status
 	 */
 	public String getDescription()
 	{
